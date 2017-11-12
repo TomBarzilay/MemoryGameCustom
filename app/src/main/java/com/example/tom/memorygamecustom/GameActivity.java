@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import java.util.Random;
@@ -67,6 +68,7 @@ private TomsButton buildButton(int index,int col){
     TomsButton t = new TomsButton(this);
     t.setType(index);
     t.setBackground(questionMark);
+    t.setScaleType(ImageView.ScaleType.CENTER_CROP);
     int size =main.getWidth()/col;
    // t.setMaxHeight(50);
     //t.setMaxWidth(50);
@@ -104,7 +106,7 @@ private TomsButton buildButton(int index,int col){
                             break;
                         case 30://match not found
                             try {
-                                Thread.sleep(750);
+                                Thread.sleep(200);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -156,24 +158,24 @@ private void getLevel(){
     }
 
     switch (level){
-        case 1:
+        case 6:
             row=4;
             col=3;
-            matches=6;
+            matches=level;
             width=440;
-            height=350;
+            height=440;
             break;
-        case 2:
+        case 8:
             row=4;
             col=4;
-            matches=8;
+            matches=level;
             width=317;
             height=300;
             break;
-        case 3:
+        case 12:
             row=6;
             col=4;
-            matches=12;
+            matches=level;
             width=317;
             height=235;
             break;
@@ -182,19 +184,19 @@ private void getLevel(){
     }
     createGame(col,row,matches,width,height);
 }
-private void setMainPic(int col){
+/*private void setMainPic(int col){
     Drawable drawable = getDrawable(R.drawable.questionmark);
     Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 // Scale it to 50 x 50
     int size =main.getWidth()/col;
      mainPic = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
 
-}
+}*/
 private boolean checkIfSame(TomsButton view1,TomsButton view2){
     if (view1.getType()==view2.getType()){ return true;} else return false;
 }
 private void matchFound() throws InterruptedException {
-    Thread.sleep(700);
+    Thread.sleep(300);
     chosenCard.setVisibility(View.GONE);
     chosenCard2.setVisibility(View.GONE);
     chosenCard=null;

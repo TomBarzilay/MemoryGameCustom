@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.drm.DrmStore;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -23,10 +24,14 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.sangcomz.fishbun.FishBun;
+import com.sangcomz.fishbun.define.Define;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class ChoosePicActivity extends AppCompatActivity {
@@ -46,6 +51,7 @@ public class ChoosePicActivity extends AppCompatActivity {
     public static boolean done;
     Handler handler;
     int ifToclear = 0;
+    ArrayList<String> imagesPaths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +79,7 @@ public class ChoosePicActivity extends AppCompatActivity {
             case 0:
                 new AlertDialog.Builder(this).setMessage("someThing Went wrong bitch").show();
         }
-        PermissionManager.check(this, Manifest.permission.READ_EXTERNAL_STORAGE, MEDIA_REQUEST);
+        PermissionManager.check(this,new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, MEDIA_REQUEST);
 
     }
 
@@ -85,6 +91,7 @@ public class ChoosePicActivity extends AppCompatActivity {
     //send uName to gallery for picking an image
     private void openGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
@@ -116,7 +123,7 @@ public class ChoosePicActivity extends AppCompatActivity {
             chosenView1.setBackground(Drawable.createFromPath(path));
             primitiveImages.add(path);
             ;
-            a = new Thread() {
+            /*a = new Thread() {
                 @Override
                 public void run() {
 
@@ -154,7 +161,7 @@ public class ChoosePicActivity extends AppCompatActivity {
             };
             a.start();
             //FilesPath[index] = filesPath;
-
+*/
         }
 
     }
@@ -171,7 +178,7 @@ public class ChoosePicActivity extends AppCompatActivity {
            ProgressDialog dialog = new ProgressDialog(this,ProgressDialog.STYLE_SPINNER);
                dialog.setMessage("lodaing...");
                dialog.show();
-        SharedPrefs.setImages(this, primitiveImages);
+        //SharedPrefs.setImages(this,primitiveImages);
         startActivity(new Intent(this, GameActivity.class).putExtra(ChooseLevelActivity.LEVEL, level));
         finish();
 

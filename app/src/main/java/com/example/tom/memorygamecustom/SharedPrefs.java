@@ -20,17 +20,17 @@ public class SharedPrefs {
         return context.getSharedPreferences(PREFS, context.MODE_PRIVATE);
     }
 
-    public static synchronized void setImages(Context context, HashSet set) {
-        getPrefs(context).edit().putStringSet(IMAGES, set).apply();
+    public static synchronized void setImages(Context context, String paths) {
+        getPrefs(context).edit().putString(IMAGES, paths).apply();
     }
 
     public static synchronized Drawable[] getImages(Context context) {
-        HashSet<String> imageSet = (HashSet<String>) getPrefs(context).getStringSet(IMAGES, null);
+        String imageSet = getPrefs(context).getString(IMAGES, null);
         if (imageSet != null) {
-            Object[] imagesArry = imageSet.toArray();
-            Drawable[] images = new Drawable[imageSet.size()];
-            for (int i = 0; i < imageSet.size(); i++) {
-                images[i] = Drawable.createFromPath(imagesArry[i].toString());
+            String [] imagesPathsArray =imageSet.split("\\|");
+            Drawable[] images = new Drawable[imageSet.length()];
+            for (int i = 0; i < imageSet.length(); i++) {
+                images[i] = Drawable.createFromPath(imagesPathsArray[i]);
             }
             return images;
         } else {

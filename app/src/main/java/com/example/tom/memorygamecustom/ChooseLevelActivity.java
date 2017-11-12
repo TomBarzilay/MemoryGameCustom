@@ -14,7 +14,7 @@ public static final String LEVEL ="level";
     }
     public void ChooseLevel(View v){
         int tag = Integer.parseInt(v.getTag().toString());
-    startActivity(new Intent(this,ChoosePicActivity.class).putExtra(LEVEL,tag));
+    startActivity(new Intent(this,CustomPhotoGalleryActivity.class).putExtra(LEVEL,tag));
     finish();
     }
 }
