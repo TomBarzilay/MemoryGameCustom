@@ -140,7 +140,7 @@ private TomsButton buildButton(int index,int col){
 }
 //brings the int that will decide how the game will be build:easy,medium or hard.
 private void getLevel(){
-    int level = getIntent().getIntExtra(ChooseLevelActivity.LEVEL,0);
+    int level = SharedPrefs.getPrefs(this).getInt(ChooseLevelActivity.LEVEL,0);
     int row =0;
     int col =0;
     int height =0;

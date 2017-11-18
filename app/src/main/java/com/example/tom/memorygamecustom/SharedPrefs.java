@@ -27,9 +27,9 @@ public class SharedPrefs {
     public static synchronized Drawable[] getImages(Context context) {
         String imageSet = getPrefs(context).getString(IMAGES, null);
         if (imageSet != null) {
-            String [] imagesPathsArray =imageSet.split("\\|");
-            Drawable[] images = new Drawable[imageSet.length()];
-            for (int i = 0; i < imageSet.length(); i++) {
+            String [] imagesPathsArray =imageSet.split("<>");
+            Drawable[] images = new Drawable[imagesPathsArray.length];
+            for (int i = 0; i < imagesPathsArray.length; i++) {
                 images[i] = Drawable.createFromPath(imagesPathsArray[i]);
             }
             return images;

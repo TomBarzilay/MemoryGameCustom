@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MemoryGameCustom.iml" filepath="$PROJECT_DIR$/MemoryGameCustom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MemoryGameCustom.iml" filepath="$PROJECT_DIR$/.idea/MemoryGameCustom.iml" />
+      <module fileurl="file://C:\Users\TomBarzilay\AndroidStudioProjects\MemoryGameCustom\MemoryGameCustom.iml" filepath="C:\Users\TomBarzilay\AndroidStudioProjects\MemoryGameCustom\MemoryGameCustom.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

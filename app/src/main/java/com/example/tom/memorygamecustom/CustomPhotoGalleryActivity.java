@@ -1,5 +1,6 @@
 package com.example.tom.memorygamecustom;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class CustomPhotoGalleryActivity extends AppCompatActivity {
 
@@ -30,8 +37,9 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
     private boolean[] thumbnailsselection;
     private int ids[];
     private int count;
+    HashSet<String> imgList;
 
-    private int pairs;
+    public int pairs;
     /**
      * Overrides methods
      */
@@ -39,13 +47,21 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_activity);
+        imgList = (HashSet<String>)SharedPrefs.getPrefs(this).getStringSet(GalleryFoldersActivity.ID_AND_PATH,new HashSet<String>());
+        count=imgList.size();
         grdImages= (GridView) findViewById(R.id.grdImages);
         btnSelect= (Button) findViewById(R.id.btnSelect);
+        thumbnailsselection = new boolean[count];
+        ids = new int[count];
+        arrPath = new String[count];
+        pairs=SharedPrefs.getPrefs(this).getInt(ChooseLevelActivity.LEVEL,0);
+        organizeIds();
 
-        final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
+        ;
+        /*final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
         final String orderBy = MediaStore.Images.Media._ID;
         @SuppressWarnings("deprecation")
-        Cursor imagecursor = managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
+        Cursor imagecursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,columns,null,null,orderBy);
         int image_column_index = imagecursor.getColumnIndex(MediaStore.Images.Media._ID);
         this.count = imagecursor.getCount();
         this.arrPath = new String[this.count];
@@ -57,11 +73,12 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
             ids[i] = imagecursor.getInt(image_column_index);
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
             arrPath[i] = imagecursor.getString(dataColumnIndex);
-        }
 
-        imageAdapter = new ImageAdapter();
+        }*/
+
+        imageAdapter = new ImageAdapter(this);
         grdImages.setAdapter(imageAdapter);
-        imagecursor.close();
+
 
 
         btnSelect.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +90,7 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
                 for (int i = 0; i < len; i++) {
                     if (thumbnailsselection[i]) {
                         cnt++;
-                        selectImages = selectImages + arrPath[i] + "|";
+                        selectImages = selectImages + arrPath[i] + "<>";
                     }
                 }
                 if (cnt !=pairs) {
@@ -81,13 +98,28 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
                 } else {
 
                     Log.d("SelectedImages", selectImages);
-                    Intent i = new Intent();
+                    Intent i = new Intent(CustomPhotoGalleryActivity.this,GameActivity.class);
                     SharedPrefs.setImages(CustomPhotoGalleryActivity.this,selectImages);
                     setResult(Activity.RESULT_OK, i);
+                    startActivity(i);
+
 
                 }
             }
         });
+    }
+    public void organizeIds(){
+
+        int i = 0;
+        for (String path : imgList){
+            Log.d("here",path);
+            String [] pathArray = path.split("<>");
+            Log.d("*************8",pathArray.length+"");
+            ids[i]= Integer.parseInt(pathArray[0]);
+            arrPath[i]=pathArray[1];
+            i++;
+
+        }
     }
     @Override
     public void onBackPressed() {
@@ -112,7 +144,7 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                return MediaStore.Images.Thumbnails.getThumbnail(getApplicationContext().getContentResolver(), id, MediaStore.Images.Thumbnails.MICRO_KIND, null);
+                return MediaStore.Images.Thumbnails.getThumbnail(getApplicationContext().getContentResolver(), id, MediaStore.Images.Thumbnails.MINI_KIND, null);
             }
 
             @Override
@@ -132,8 +164,9 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
     public class ImageAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
 
-        public ImageAdapter() {
-            mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        public ImageAdapter(Context context) {
+
+            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         public int getCount() {
@@ -207,6 +240,7 @@ public final static String IMAGES_PATH ="IMAGES_PATH";
     class ViewHolder {
         ImageView imgThumb;
         CheckBox chkImage;
+        TextView textView;
         int id;
     }
 
