@@ -2,4 +2,5 @@
     <string name="app_name">MemoryGameCustom</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="select">select</string>
+    <string name="ok">ok</string>
 </resources>

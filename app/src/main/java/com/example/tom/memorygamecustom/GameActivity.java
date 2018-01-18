@@ -1,214 +1,179 @@
 package com.example.tom.memorygamecustom;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-
-import java.util.Random;
+import android.widget.RelativeLayout;
 
 public class GameActivity extends AppCompatActivity {
-GridLayout main;//the group view that hold the buttons
-    Drawable[] images; //an array that gets the data from the shared preference class
-    TomsButton[][] gameCards; // an array of buttons that create the table
-    Drawable mainPic;//a picture that will be shown before the user click a button and revels a
-    TomsButton chosenCard;//a variable button will hold the reference of the first button that was clicked
-    TomsButton chosenCard2;//a variable button will hold the reference of the second button that was clicked
-    Drawable questionMark;
-    int stateCheck;
-   public static ProgressDialog r;
-
+    private Drawable[] images;
+    private int count;
+    private TomsButton[] dataSource;
+    private TomsButton chosenCard;
+    private TomsButton chosenCard2;
+    private int height;
+    RelativeLayout progressBar;
+    private GameRules gameRules;
+    RecyclerView gridView;
+    private Drawable questionMark;
+    private int halfCount;
+    private boolean alreadyStarted=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         questionMark = getDrawable(R.drawable.questionmark);
-        setContentView(R.layout.activity_game);
-        main=(GridLayout) findViewById(R.id.mainGame);
-        getLevel();
+        setContentView(R.layout.game_activity);
+        gridView = (RecyclerView) findViewById(R.id.grid);
+        try {
+            getLevel();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        // initializeButtons();
+    }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (alreadyStarted==false){init();
+        alreadyStarted=true;}
+
 
     }
-private void createGame(int col,int row, int matches,int width,int height){
- prepareGame(col,row);
-//setMainPic(col);
-gameCards= new TomsButton[col][row];
-    int[] pairsCheck = new int[matches];
-    for (int x =0;x<gameCards.length;x++){
-        for (int y =0;y<gameCards[x].length;y++){
 
-            int index =new Random().nextInt(matches);
-            while(pairsCheck[index]>=2) {
-            /*    int oCount=0;
-                for (int o : pairsCheck){
-                     oCount=oCount+o;
+    public void init() {
 
-                    if (oCount==matches*2)break;
-                }*/
-                index = new Random().nextInt(matches);
+        StaggeredGridLayoutManager
+                layoutManager = new StaggeredGridLayoutManager(getColumnsNumber(), StaggeredGridLayoutManager.VERTICAL);
+        gridView.setLayoutManager(layoutManager);
+        height = gridView.getHeight();
+
+        try {
+            images = SharedPrefs.getImages(this);
+        } catch (OutOfMemoryError outOfMemoryError) {
+            startLoadingBar();
+            saveTheMemory(images);
+
+
+        }
+
+        gameRules = new GameRules(this,images,questionMark,halfCount);
+        if (images!=null){gridView.setAdapter(new MyAdapter(GameActivity.this, count, height / getRowNumber(), gameRules));}
+
+    }
+
+    private void startLoadingBar() {
+    RelativeLayout rel = findViewById(R.id.bigger);
+         progressBar = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.compress_progress_bar,null,false);
+        rel.addView(progressBar, RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+    }
+
+
+    //brings the int that will decide how the game will be build:easy,medium or hard.
+    private void getLevel() throws InterruptedException {
+        int level = SharedPrefs.getPrefs(this).getInt(ChooseLevelActivity.LEVEL, 0);
+        halfCount=level;
+        count = level*2;
+    }
+
+    private boolean checkIfSame(TomsButton view1, TomsButton view2) {
+        if (view1.getType() == view2.getType() && view1 != view2) {
+            return true;
+        } else return false;
+    }
+
+    private void matchFound() {
+
+
+        chosenCard.setVisibility(View.GONE);
+        chosenCard2.setVisibility(View.GONE);
+        chosenCard = null;
+        chosenCard2 = null;
+    }
+
+
+
+    private synchronized void matchNotFound() throws InterruptedException {
+        new Handler(getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                    chosenCard.setBackground(questionMark);
+                    chosenCard2.setBackground(questionMark);
+                    chosenCard = null;
+                    chosenCard2 = null;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            pairsCheck[index]++;
-            main.addView(buildButton(index,row),width,height);
+        });
+
+
+    }
+
+
+    private int getColumnsNumber() {
+        switch (count) {
+            case 12:
+                return 3;
+            case 16:
+                return 4;
+            case 24:
+                return 4;
         }
+        return 0;
     }
 
-}
-private void prepareGame(int col,int row){
-    main.setColumnCount(col);
-    main.setRowCount(row);
-}
-private TomsButton buildButton(int index,int col){
-    TomsButton t = new TomsButton(this);
-    t.setType(index);
-    t.setBackground(questionMark);
-    t.setScaleType(ImageView.ScaleType.CENTER_CROP);
-    int size =main.getWidth()/col;
-   // t.setMaxHeight(50);
-    //t.setMaxWidth(50);
-    t.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(final View view) {
-           AsyncTask asyncTask = new AsyncTask() {
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-                @Override
-                protected Object doInBackground(Object[] objects) {
-                    try {
-                        Thread.sleep(700);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                        return null;
-                }
-                @Override
-                protected void onPostExecute(Object o) {
-                    super.onPostExecute(o);
-                    switch (stateCheck){
-                        case 10://first click
-
-                            break;
-                        case 20://match was found
-                            try {
-                                matchFound();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        case 30://match not found
-                            try {
-                                Thread.sleep(200);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            chosenCard.setBackground(questionMark);
-                            chosenCard2.setBackground(questionMark);
-                            chosenCard=null;
-                            chosenCard2=null;
-                            break;
-
-                    }
-                }
-            };
-
-        if (chosenCard==null){
-            chosenCard= (TomsButton) view;
-            chosenCard.setBackground(images[chosenCard.getType()]);
-            stateCheck=10;
-        }else {
-            chosenCard2 = (TomsButton)view;
-            chosenCard2.setBackground(images[chosenCard2.getType()]);
-            chosenCard.setBackground(images[chosenCard.getType()]);
-
-            if (checkIfSame((TomsButton) view,chosenCard)){
-                stateCheck=20;
-            }else stateCheck=30;
-            asyncTask.execute();
+    private int getRowNumber() {
+        switch (count) {
+            case 12:
+                return 4;
+            case 16:
+                return 4;
+            case 24:
+                return 6;
         }
-        }
-    });
-    return t;
-}
-//brings the int that will decide how the game will be build:easy,medium or hard.
-private void getLevel(){
-    int level = SharedPrefs.getPrefs(this).getInt(ChooseLevelActivity.LEVEL,0);
-    int row =0;
-    int col =0;
-    int height =0;
-    int width = 0;
-    int matches =0;
-    try {
-        images = SharedPrefs.getImages(this);
-    }catch (OutOfMemoryError outOfMemoryError){
-        r = new ProgressDialog(this,ProgressDialog.STYLE_SPINNER);
-        r.setTitle("saving the pictures");
-        r.setMessage("loading...");
-        r.setCancelable(true);
-        r.show();
-
+        return 0;
     }
+    private void saveTheMemory(Drawable[] arrayOfDrawables) {
 
-    switch (level){
-        case 6:
-            row=4;
-            col=3;
-            matches=level;
-            width=440;
-            height=440;
-            break;
-        case 8:
-            row=4;
-            col=4;
-            matches=level;
-            width=317;
-            height=300;
-            break;
-        case 12:
-            row=6;
-            col=4;
-            matches=level;
-            width=317;
-            height=235;
-            break;
-        case 0:
-            new AlertDialog.Builder(this).setMessage("the level is bad");
+        new AsyncTask<Void, Drawable [], Drawable[]>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected Drawable[] doInBackground(Void... voids) {
+                Drawable[] compressedImages = SharedPrefs.CompressPhotos(GameActivity.this);
+                return compressedImages;
+            }
+
+            @Override
+            protected void onPostExecute(Drawable[] drawable) {
+                super.onPostExecute(drawable);
+                pushTheDrawables(drawable);
+            }
+        }.execute();
     }
-    createGame(col,row,matches,width,height);
-}
-/*private void setMainPic(int col){
-    Drawable drawable = getDrawable(R.drawable.questionmark);
-    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-// Scale it to 50 x 50
-    int size =main.getWidth()/col;
-     mainPic = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 50, 50, true));
-
-}*/
-private boolean checkIfSame(TomsButton view1,TomsButton view2){
-    if (view1.getType()==view2.getType()){ return true;} else return false;
-}
-private void matchFound() throws InterruptedException {
-    Thread.sleep(300);
-    chosenCard.setVisibility(View.GONE);
-    chosenCard2.setVisibility(View.GONE);
-    chosenCard=null;
-    chosenCard2=null;
-}
-public static void imagesAreDone(Context context){
-    try{SharedPrefs.getImages(context);
-        if (r!=null)r.cancel();}
-    catch (OutOfMemoryError e ){
-    new AlertDialog.Builder(context).setMessage("youre fucked").create().show();
-
+    private void pushTheDrawables(Drawable[] drawables) {
+        gameRules.setImages(drawables);
+        progressBar.setVisibility(View.GONE);
+        gridView.setAdapter(new MyAdapter(GameActivity.this, count, height / getRowNumber(), gameRules));
     }
 
 }
-}
+

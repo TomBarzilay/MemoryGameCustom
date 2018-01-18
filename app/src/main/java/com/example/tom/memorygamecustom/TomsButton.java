@@ -13,8 +13,13 @@ public class TomsButton extends android.support.v7.widget.AppCompatImageView {
         super(context);
     }
 
-    public void setType(int type) {
+    TomsButton(Context context,int width,int height){
+        super(context);
+    }
+
+    public TomsButton setType(int type) {
         Type = type;
+        return  this;
     }
 
     public int getType(){
