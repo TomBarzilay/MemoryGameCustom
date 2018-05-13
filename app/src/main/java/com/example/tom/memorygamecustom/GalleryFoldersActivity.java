@@ -22,8 +22,6 @@ import java.util.HashSet;
 public class GalleryFoldersActivity extends AppCompatActivity {
 private GridView gridView;
     public final static String  ID_AND_PATH = "ID_AND_PATH";
-    public final static String IMAGES_ARRAY = "IMAGES_ARRAY";
-    private CustomPhotoGalleryActivity.ImageAdapter imageAdapter;
     private String[] arrPath;
     private int ids[];
     private int count;
@@ -38,7 +36,6 @@ private GridView gridView;
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String a = (String) adapterView.getAdapter().getItem(i);
-                String folderName =a;
                 Intent toGallery = new Intent(GalleryFoldersActivity.this,CustomPhotoGalleryActivity.class);
                 HashSet<String> idAndPathSet = new HashSet<>(listOfLists.get(a));
                 SharedPrefs.getPrefs(GalleryFoldersActivity.this).edit().putStringSet(ID_AND_PATH,idAndPathSet).apply();

@@ -4,9 +4,8 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <application
-
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,9 +27,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".WebImagesGridActivity"></activity>
+        <activity android:name=".SearchImagesActivity"></activity>
         <activity android:name=".GalleryActivity" />
         <activity android:name=".GalleryFoldersActivity" />
-        <activity android:name=".GameActivity" android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".GameActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ChooseImagesSourceActivity"></activity>
     </application>
 
 </manifest>

@@ -11,21 +11,25 @@ import android.os.Bundle;
 import android.view.View;
 
 public class ChooseLevelActivity extends AppCompatActivity {
-public static final String LEVEL ="level";
-public static final int MEDIA_REQUEST = 102;
-private String [] permissions =new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    public static final String LEVEL ="level";
+    public static final int MEDIA_REQUEST = 102;
+    //list of permissions needed
+    private String [] permissions =new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //permission asking from the user
         PermissionManager.check(this,permissions, MEDIA_REQUEST);
 
 
     }
 
     @Override
+        //if the user dosen't approve, he will be asked again
     public void onRequestPermissionsResult(int requestCode, @NonNull final String[] permissions, @NonNull int[] grantResults) {
         for (int i =0;i<grantResults.length;i++){
+
             if (grantResults[i]!= PackageManager.PERMISSION_GRANTED){
                 new AlertDialog.Builder(this).setMessage("sorry we must get permission to access your gallery if you want a custom game made of your photos").setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
@@ -43,9 +47,14 @@ private String [] permissions =new String[] {Manifest.permission.READ_EXTERNAL_S
     }
 
     public void ChooseLevel(View v){
+        /*the number of cards in the game will be decided by what the user choose
+            easy - 12 cards
+            medium - 16 cards
+            hard - 24 cards
+        */
         int tag = Integer.parseInt(v.getTag().toString());
         SharedPrefs.getPrefs(this).edit().putInt(LEVEL,tag).apply();
-    startActivity(new Intent(this,GalleryFoldersActivity.class));
-    finish();
+        startActivity(new Intent(this,GalleryFoldersActivity.class));
+        finish();
     }
 }

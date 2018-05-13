@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 public class GameActivity extends AppCompatActivity {
     private Drawable[] images;
     private int count;
-    private TomsButton[] dataSource;
     private TomsButton chosenCard;
     private TomsButton chosenCard2;
     private int height;
