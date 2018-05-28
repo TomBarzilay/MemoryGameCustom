@@ -93,12 +93,12 @@ private void matchFound() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(400);
+                    Thread.sleep(800);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                chosenCard.setVisibility(View.GONE);
-                chosenCard2.setVisibility(View.GONE);
+                chosenCard.setBackground( context.getDrawable(R.drawable.deadpool));
+                chosenCard2.setBackground(context.getDrawable(R.drawable.deadpool));
                 chosenCard=null;
                 chosenCard2=null;
 
@@ -117,8 +117,8 @@ private void matchFound() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(200);
-                    chosenCard.setBackground(questionMark);
+                    Thread.sleep(600);
+                     chosenCard.setBackground(questionMark);
                     chosenCard2.setBackground(questionMark);
                     chosenCard=null;
                     chosenCard2=null;

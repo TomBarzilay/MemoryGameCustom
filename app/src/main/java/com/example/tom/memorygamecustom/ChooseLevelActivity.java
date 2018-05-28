@@ -54,7 +54,7 @@ public class ChooseLevelActivity extends AppCompatActivity {
         */
         int tag = Integer.parseInt(v.getTag().toString());
         SharedPrefs.getPrefs(this).edit().putInt(LEVEL,tag).apply();
-        startActivity(new Intent(this,GalleryFoldersActivity.class));
+        startActivity(new Intent(this,ChooseImagesSourceActivity.class));
         finish();
     }
 }

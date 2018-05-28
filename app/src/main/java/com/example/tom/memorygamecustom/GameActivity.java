@@ -1,5 +1,9 @@
 package com.example.tom.memorygamecustom;
 
+import android.app.AlertDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -12,26 +16,28 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
+
 public class GameActivity extends AppCompatActivity {
-    private Drawable[] images;
-    private int count;
-    private TomsButton chosenCard;
-    private TomsButton chosenCard2;
-    private int height;
-    RelativeLayout progressBar;
-    private GameRules gameRules;
-    RecyclerView gridView;
-    private Drawable questionMark;
+    private Drawable[] images; // an array of drawables that contains the images for the game;
+    private int count;// the number of cards in the game
+    private int height;// the max height of the user device screen
+    private RelativeLayout progressBar;
+    private GameRules gameRules;// an object responsible of the behavior of the buttons(on click listener and more)
+    private RecyclerView gridView; // the main layout
+    private Drawable questionMark;// the default image showed when nothing is clicked
     private int halfCount;
     private boolean alreadyStarted=false;
+    private boolean isFromNet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         questionMark = getDrawable(R.drawable.questionmark);
         setContentView(R.layout.game_activity);
         gridView = (RecyclerView) findViewById(R.id.grid);
+        isFromNet = SharedPrefs.getPrefs(this).getBoolean(getString(R.string.isfromnet),false);
         try {
-            getLevel();
+            getLevel(); //gets what the user chose and build the quantity of game cards according to it.
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -44,7 +50,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (alreadyStarted==false){init();
+        if (alreadyStarted==false){init();//starts the initialization after the activity was drawn, so the app can get the max height
         alreadyStarted=true;}
 
 
@@ -58,10 +64,14 @@ public class GameActivity extends AppCompatActivity {
         height = gridView.getHeight();
 
         try {
-            images = SharedPrefs.getImages(this);
-        } catch (OutOfMemoryError outOfMemoryError) {
+             if (isFromNet){
+                 images = SharedPrefs.getImages();
+             }else {
+                 images = SharedPrefs.getImages(this);
+             }
+             } catch (OutOfMemoryError outOfMemoryError) {
             startLoadingBar();
-            saveTheMemory(images);
+            saveTheMemory(images);// a method that compress the images so there wont be a out of memroy error
 
 
         }
@@ -72,7 +82,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void startLoadingBar() {
-    RelativeLayout rel = findViewById(R.id.bigger);
+    RelativeLayout rel = (RelativeLayout) findViewById(R.id.bigger);
          progressBar = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.compress_progress_bar,null,false);
         rel.addView(progressBar, RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
     }
@@ -85,41 +95,9 @@ public class GameActivity extends AppCompatActivity {
         count = level*2;
     }
 
-    private boolean checkIfSame(TomsButton view1, TomsButton view2) {
-        if (view1.getType() == view2.getType() && view1 != view2) {
-            return true;
-        } else return false;
-    }
-
-    private void matchFound() {
-
-
-        chosenCard.setVisibility(View.GONE);
-        chosenCard2.setVisibility(View.GONE);
-        chosenCard = null;
-        chosenCard2 = null;
-    }
 
 
 
-    private synchronized void matchNotFound() throws InterruptedException {
-        new Handler(getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(200);
-                    chosenCard.setBackground(questionMark);
-                    chosenCard2.setBackground(questionMark);
-                    chosenCard = null;
-                    chosenCard2 = null;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-    }
 
 
     private int getColumnsNumber() {
@@ -145,30 +123,13 @@ public class GameActivity extends AppCompatActivity {
         }
         return 0;
     }
-    private void saveTheMemory(Drawable[] arrayOfDrawables) {
+    private void saveTheMemory( Drawable[] arrayOfDrawables) {
+        ArrayList<String> arrayListofPaths = SharedPrefs.getListOfPaths();
+        SaveMemoryTask saveMemoryTask = new SaveMemoryTask(this);
+        saveMemoryTask.execute(arrayListofPaths);
 
-        new AsyncTask<Void, Drawable [], Drawable[]>() {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-            }
-
-            @Override
-            protected Drawable[] doInBackground(Void... voids) {
-                Drawable[] compressedImages = SharedPrefs.CompressPhotos(GameActivity.this);
-                return compressedImages;
-            }
-
-            @Override
-            protected void onPostExecute(Drawable[] drawable) {
-                super.onPostExecute(drawable);
-                pushTheDrawables(drawable);
-            }
-        }.execute();
     }
-    private void pushTheDrawables(Drawable[] drawables) {
+    public void pushTheDrawables(Drawable[] drawables) {
         gameRules.setImages(drawables);
         progressBar.setVisibility(View.GONE);
         gridView.setAdapter(new MyAdapter(GameActivity.this, count, height / getRowNumber(), gameRules));

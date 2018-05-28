@@ -13,13 +13,15 @@ final public static String q = "Q";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        input= findViewById(R.id.input);
+        input= (EditText) findViewById(R.id.input);
+        SharedPrefs.getPrefs(this).edit().putBoolean(getString(R.string.isfromnet),true).apply();
     }
 
     public void sendQ(View view) {
         String text = input.getText().toString();
-        Intent i = new Intent(this,WebImagesGridActivity.class);
+        Intent i = new Intent(this,ImageSelectionGridActivity.class);
         i.putExtra(q,text);
+        i.putExtra("isFromNet",true);
         startActivity(i);
 
     }

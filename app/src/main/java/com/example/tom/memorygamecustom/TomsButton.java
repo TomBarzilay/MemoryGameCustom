@@ -8,7 +8,7 @@ import android.widget.Button;
  */
 
 public class TomsButton extends android.support.v7.widget.AppCompatImageView {
-   int Type;
+    private int Type;
     public TomsButton(Context context) {
         super(context);
     }

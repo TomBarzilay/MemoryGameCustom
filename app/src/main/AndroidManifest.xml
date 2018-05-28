@@ -19,15 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomPhotoGalleryActivity">
-            <intent-filter>
-                <action android:name="luminous.ACTION_PICK" />
-                <action android:name="luminous.ACTION_MULTIPLE_PICK" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".WebImagesGridActivity"></activity>
+        <activity android:name=".ImageSelectionGridActivity"></activity>
         <activity android:name=".SearchImagesActivity"></activity>
         <activity android:name=".GalleryActivity" />
         <activity android:name=".GalleryFoldersActivity" />
