@@ -7,18 +7,20 @@
     <Button
         android:layout_width="170dp"
         android:layout_height="100dp"
+        android:layout_marginStart="120dp"
         android:layout_marginLeft="120dp"
         android:layout_marginTop="100dp"
-        android:text="choose from gallery"
+        android:text="@string/from_gallery"
         android:onClick="chooseImageSource"
         style="@style/choosingButtons"/>
     <Button
         android:layout_width="170dp"
         android:layout_height="100dp"
         android:tag="web"
+        android:layout_marginStart="120dp"
         android:layout_marginLeft="120dp"
         android:layout_marginTop="60dp"
-        android:text="search images at the web"
+        android:text="@string/from_web"
         android:onClick="chooseImageSource"
         style="@style/choosingButtons"/>
 </LinearLayout>

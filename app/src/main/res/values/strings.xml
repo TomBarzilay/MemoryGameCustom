@@ -2,6 +2,19 @@
     <string name="app_name">MemoryGameCustom</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="select">select</string>
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
     <string name="isfromnet">isFromNet</string>
+    <string name="permission_is_required">sorry we must get permission to access your gallery if you want a custom game made of your photos</string>
+    <string name="denial">i dont allow</string>
+    <string name="from_gallery">choose from gallery</string>
+    <string name="from_web">search images at the web</string>
+    <string name="choose_game_level">Choose game level</string>
+    <string name="easy">easy</string>
+    <string name="medium">medium</string>
+    <string name="hard">Hard</string>
+    <string name="search_images_from_web">search images from web</string>
+    <string name="enter_image_name_for_search">enter image name for search</string>
+    <string name="search">search</string>
+    <string name="loading">Loading...</string>
+    <string name="save_images">save images</string>
 </resources>

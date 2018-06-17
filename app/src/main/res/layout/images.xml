@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.tom.memorygamecustom.TomsButton xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.tom.memorygamecustom.dataholders.GameCards xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/image"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-</com.example.tom.memorygamecustom.TomsButton>
+</com.example.tom.memorygamecustom.dataholders.GameCards>
