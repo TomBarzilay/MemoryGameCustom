@@ -81,7 +81,7 @@ public class ImageSelectionGridActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ImageSearchResult> call, Throwable t) {
-                Log.d("#$$$$$$$$$$$$$$$$$4", t.getCause().getMessage());
+                Log.d("fail reason", t.getCause().getMessage());
                 new AlertDialog.Builder(ImageSelectionGridActivity.this).setMessage("there is a problem with you internet connection").show();
             }
         };
